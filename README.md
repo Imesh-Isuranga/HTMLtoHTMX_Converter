@@ -1,12 +1,14 @@
 # HTMLtoHTMX_Converter
 # Milestones Summary:
-1.Set Up Your Project
-2.Parse the HTML
-3.Identify AJAX Requests
-4.Identify Form Tags
-5.Identify HTMX Attributes
-6.Implement Conversion Logic
-7.Build a User Interface (Optional)
-8.Testing and Validation
-9.Documentation and User Guide
-10.Deployment (Optional)
+<ol>
+  <li>Set Up Your Project</li>
+  <li>Parse the HTML</li>
+  <li>Identify AJAX Requests</li>
+  <li>Identify Form Tags</li>
+  <li>Identify HTMX Attributes</li>
+  <li>Implement Conversion Logic</li>
+  <li>Build a User Interface (Optional)</li>
+  <li>Testing and Validation</li>
+  <li>Documentation and User Guide</li>
+  <li>Deployment (Optional)</li>
+</ol>
