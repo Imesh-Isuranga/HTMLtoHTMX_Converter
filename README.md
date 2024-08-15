@@ -1,5 +1,5 @@
 # HTMLtoHTMX_Converter
-# Milestones Summary:
+## Milestones Summary:
 <ol>
   <li>Set Up Your Project</li>
   <li>Parse the HTML</li>
