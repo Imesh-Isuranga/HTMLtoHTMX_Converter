@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}FlixCareers | Home{% endblock title %}
+
+{% block content %}
+    <div class="outer-wrap">
+        <div class="main-wrap">
+            <p class="main-text">HTMX to HTML Converter</p>
+        </div>
+        <div class="form-wrap">
+            <form hx-post="{% url 'main' %}" hx-target="#htmx" hx-swap="innerHTML">
+            {% comment %} <form method="POST"> 
+                {% csrf_token %}{% endcomment %}
+                {{ form | crispy }}
+                <br>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div class="htmx-wrap">
+        <div class="inner-htmx-wrap" id="htmx">
+            <!-- The HTML snippet will be rendered here -->
+             {{ htmlInput }}
+        </div>
+    </div>
+{% endblock content %}

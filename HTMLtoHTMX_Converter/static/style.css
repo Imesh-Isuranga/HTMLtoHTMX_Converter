@@ -1,0 +1,47 @@
+.outer-wrap{
+    width: 100vw;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+}
+
+.main-wrap{
+    width: 100vw;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.form-wrap{
+    width: 100vw;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.main-text{
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.htmx-wrap{
+    width: 100vw;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inner-htmx-wrap{
+    width: 60vw;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
