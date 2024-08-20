@@ -107,7 +107,5 @@ def convert_form_to_htmx(html_content):
     for script_tag in script_tags:
         script_tag.string = pattern.sub('htmx.onLoad(function(elt){', script_tag.string)
 
-    # Print the modified HTML
-    print(soup.prettify())
 
     return str(soup)
