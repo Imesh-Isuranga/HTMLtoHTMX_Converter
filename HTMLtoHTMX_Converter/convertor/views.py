@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render
 from convertor.forms import HtmlConvertorForm
 from bs4 import BeautifulSoup
@@ -20,7 +21,6 @@ def Convertor(request):
 
 def convert_form_to_htmx(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
-
     # Create a new <script> tag
     new_div = soup.new_tag("script", 
                         src="https://unpkg.com/htmx.org@2.0.2", 
@@ -36,6 +36,13 @@ def convert_form_to_htmx(html_content):
     for form in forms:
         # Convert the method to HTMX
         if form.has_attr('method'):
+
+            #check csfr token
+            if 'csrf' in form.decode_contents():
+                print("CSRF found in form:")
+            else:
+                print("CSRF not found in form.")
+
             method = form['method'].lower()
             action = form['action'] if form.has_attr('action') else ''
             if form.has_attr('action'):
@@ -88,6 +95,19 @@ def convert_form_to_htmx(html_content):
         #     # Add hx-swap (Example: Swap inner HTML of the target element)
         #     form['hx-swap'] = 'innerHTML'
 
-        
+    
+
+    # Define a regular expression pattern that matches the target string with optional spaces
+    pattern = re.compile(r'document\.addEventListener\("DOMContentLoaded",\s*\(\)\s*=>\s*{')
+
+    # Find all <script> tags containing the pattern
+    script_tags = soup.find_all(lambda tag: tag.name == "script" and pattern.search(tag.text))
+
+    # Replace the matched pattern with 'a{' in each script tag
+    for script_tag in script_tags:
+        script_tag.string = pattern.sub('htmx.onLoad(function(elt){', script_tag.string)
+
+    # Print the modified HTML
+    print(soup.prettify())
 
     return str(soup)
