@@ -99,13 +99,42 @@ def convert_form_to_htmx(html_content):
 
     # Define a regular expression pattern that matches the target string with optional spaces
     pattern = re.compile(r'document\.addEventListener\("DOMContentLoaded",\s*\(\)\s*=>\s*{')
+    pattern_getElement = re.compile(r'document\.getElementById\("')
+    #pattern_click = re.compile(r'addEventListener\("click",\s*function\(\)\s*{')
+    pattern_click = re.compile(r'(\b\w+)\.addEventListener\("click",\s*function\(\)\s*{[^}]*\}\)')
+
+
+
 
     # Find all <script> tags containing the pattern
     script_tags = soup.find_all(lambda tag: tag.name == "script" and pattern.search(tag.text))
+    id_tags = soup.find_all(lambda tag: tag.name == "script" and pattern_getElement.search(tag.text))
+    id_clicks = soup.find_all(lambda tag: tag.name == "script")
 
-    # Replace the matched pattern with 'a{' in each script tag
+
+
+    # Replace the matched pattern with '...' in each script tag
     for script_tag in script_tags:
         script_tag.string = pattern.sub('htmx.onLoad(function(elt){', script_tag.string)
+    
+    for id_tag in id_tags:
+        id_tag.string = pattern_getElement.sub('htmx.find("#', id_tag.string)
+
+    for id_click in id_clicks:
+        # Extract and replace the patterns
+        script_text = id_click.string
+        if script_text:
+            # Find all matches
+            new_script_text = pattern_click.sub(lambda m: f'htmx.on({m.group(1)},"click", function(evt)', script_text)
+            
+            # Replace `anyText` with the new variable assignment
+            new_script_text = re.sub(r'(\b\w+)\s*=\s*document\.getElementById\("demo"\);', r'newText = document.getElementById("demo");', new_script_text)
+            
+            # Update the script tag with the new content
+            script_tag.string = new_script_text
+
+    print(soup.prettify())
+
 
 
     return str(soup)
