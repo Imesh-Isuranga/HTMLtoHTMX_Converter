@@ -21,7 +21,7 @@ def Convertor(request):
 
 def convert_form_to_htmx(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
-    # Create a new <script> tag
+    # Create a new <script> tag-----------------------------------------------------------------------------------
     new_div = soup.new_tag("script", 
                         src="https://unpkg.com/htmx.org@2.0.2", 
                         integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ", 
@@ -30,7 +30,7 @@ def convert_form_to_htmx(html_content):
     # Append the new <script> tag to the <head> section of the HTML
     soup.html.head.append(new_div)
  
-    # Find all form elements
+    # Find all form elements--------------------------------------------------------------------------------------------
     forms = soup.find_all('form')
 
     for form in forms:
@@ -89,52 +89,39 @@ def convert_form_to_htmx(html_content):
                 else:
                     print("No script found that handles the form submission.")
 
-        # if form.has_attr('method'):
-        #     # Add hx-target (Example: Target an element with id="result")
-        #     form['hx-target'] = '#result'
-        #     # Add hx-swap (Example: Swap inner HTML of the target element)
-        #     form['hx-swap'] = 'innerHTML'
 
-    
-
+    # HTMX to scripts elements--------------------------------------------------------------------------------------------
     # Define a regular expression pattern that matches the target string with optional spaces
-    pattern = re.compile(r'document\.addEventListener\("DOMContentLoaded",\s*\(\)\s*=>\s*{')
+    pattern_DOM_LOAD = re.compile(r'document\.addEventListener\s*\(\s*"\s*DOMContentLoaded\s*"\s*,\s*(\(\s*\)\s*(?:=>|=>)|(?:function|fun|func)\s*\(\s*\))\s*{',re.IGNORECASE)
     pattern_getElement = re.compile(r'document\.getElementById\("')
-    #pattern_click = re.compile(r'addEventListener\("click",\s*function\(\)\s*{')
-    pattern_click = re.compile(r'(\b\w+)\.addEventListener\("click",\s*function\(\)\s*{[^}]*\}\)')
-
-
+    pattern_click = re.compile(r'(\b\w+)\.addEventListener\(\s*"\s*(\w+)\s*"\s*,\s*(?:function|func|fun)\s*\(\)\s*{[^}]*\}\)',re.IGNORECASE)
 
 
     # Find all <script> tags containing the pattern
-    script_tags = soup.find_all(lambda tag: tag.name == "script" and pattern.search(tag.text))
-    id_tags = soup.find_all(lambda tag: tag.name == "script" and pattern_getElement.search(tag.text))
-    id_clicks = soup.find_all(lambda tag: tag.name == "script")
-
+    script_tags_DOM_LOAD = soup.find_all(lambda tag: tag.name == "script" and pattern_DOM_LOAD.search(tag.text))
+    script_tags_id_tags = soup.find_all(lambda tag: tag.name == "script" and pattern_getElement.search(tag.text))
+    script_tags_id_clicks = soup.find_all(lambda tag: tag.name == "script")
 
 
     # Replace the matched pattern with '...' in each script tag
-    for script_tag in script_tags:
-        script_tag.string = pattern.sub('htmx.onLoad(function(elt){', script_tag.string)
+    for script_tag_DOM_LOAD in script_tags_DOM_LOAD:
+        script_tag_DOM_LOAD.string = pattern_DOM_LOAD.sub('htmx.onLoad(function(elt){', script_tag_DOM_LOAD.string)
     
-    for id_tag in id_tags:
-        id_tag.string = pattern_getElement.sub('htmx.find("#', id_tag.string)
+    for script_tag_id_tags in script_tags_id_tags:
+        script_tag_id_tags.string = pattern_getElement.sub('htmx.find("#', script_tag_id_tags.string)
 
-    for id_click in id_clicks:
+    for script_tag_id_clicks in script_tags_id_clicks:
         # Extract and replace the patterns
-        script_text = id_click.string
+        script_text = script_tag_id_clicks.string
         if script_text:
             # Find all matches
             new_script_text = pattern_click.sub(lambda m: f'htmx.on({m.group(1)},"click", function(evt)', script_text)
             
             # Replace `anyText` with the new variable assignment
-            new_script_text = re.sub(r'(\b\w+)\s*=\s*document\.getElementById\("demo"\);', r'newText = document.getElementById("demo");', new_script_text)
+            #new_script_text = re.sub(r'(\b\w+)\s*=\s*document\.getElementById\("demo"\);', r'newText = document.getElementById("demo");', new_script_text)
             
             # Update the script tag with the new content
-            script_tag.string = new_script_text
+            script_tag_id_clicks.string = new_script_text
 
-    print(soup.prettify())
-
-
-
+    #print(soup.prettify())
     return str(soup)
