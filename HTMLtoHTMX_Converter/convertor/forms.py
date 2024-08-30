@@ -17,6 +17,12 @@ class HTMLFileForm(forms.ModelForm):
             'file': forms.ClearableFileInput(attrs={'class': 'form-control-file', 'accept': '.html'}),
         }
 
+class HtmlConvertorForm(forms.ModelForm):
+    class Meta:
+        model = HTMLFile
+        fields = ['name', 'file']
+
+
     def clean_file(self):
         file = self.cleaned_data.get('file')
         if file:
