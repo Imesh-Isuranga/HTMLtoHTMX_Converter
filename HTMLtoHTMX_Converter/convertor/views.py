@@ -132,17 +132,27 @@ def convert_form_to_htmx(html_content):
 
     for form_tag in form_tags:
         if form_tag is not None:
-            inner_tag = form_tag.find('input')
-
-            if inner_tag is not None:
-                # Add new attribute to the 'input' tag
-                inner_tag['hx-trigger'] = 'change'
-                inner_tag['hx-sync'] = 'closest form:abort'
-            else:
-                print("Input tag with class 'inner' not found.")
+            inner_tags = form_tag.find_all('input')
+            for inner_tag in inner_tags:
+                if inner_tag is not None:
+                    # Add new attribute to the 'input' tag
+                    inner_tag['hx-trigger'] = 'change'
+                    inner_tag['hx-sync'] = 'closest form:abort'
+                else:
+                    print("Input tag with class 'inner' not found.")
         else:
             print("Form tag with class 'outer' not found.")
 
+
+
+    # Finding all div inside with a tag replace it with HTMX--------------------------------------------------------------------------------------------
+    all_divs = soup.find_all('div')
+
+    for all_div in all_divs:
+        a_tags = all_div.find_all('a')
+        for a_tag in a_tags:
+            all_div['hx-boost'] = 'true'
+            break
 
     #print(soup.prettify())
     return str(soup)
