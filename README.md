@@ -1,7 +1,7 @@
 # HTMLtoHTMX_Converter
 ## Milestones Summary:
 <ol>
-  <li>Set Up Project</li><span class="fa-solid fa-user"></span>
+  <li>Set Up Project</li><i class="fab fa-facebook"></i>
   <li>Parse the HTML</li>
   <li>Identify AJAX Requests</li>
   <li>Identify Form Tags</li>
